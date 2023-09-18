@@ -1,8 +1,8 @@
-import { Box } from "@mui/material";
+import Board from "../components/board";
 import "./App.css";
 
 function App(): JSX.Element {
-	return <Box />;
+	return <Board />;
 }
 
 export default App;

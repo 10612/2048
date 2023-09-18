@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^4.34.1",
+    "@types/lodash-es": "^4.17.9",
     "@types/node": "^20.6.2",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
@@ -34,7 +35,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "prettier": "^3.0.3",
+    "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",

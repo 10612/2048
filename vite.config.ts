@@ -7,9 +7,7 @@ import eslint from "vite-plugin-eslint";
 // https://vitejs.dev/config/
 export default (): UserConfig => {
 	return defineConfig({
-		root: "src",
 		server: {
-			cors: true,
 			port: 3000,
 		},
 		resolve: {

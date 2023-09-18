@@ -35,7 +35,7 @@
         "@typescript-eslint/ban-types": "off",
         "no-use-before-define":"off",
         "no-promise-executor-return": "off",
-        "no-shadow": "warn",
+        "no-shadow": "off",
         "@typescript-eslint/no-use-before-define": ["error"],
         "@typescript-eslint/no-non-null-assertion": [0],
         "@typescript-eslint/no-non-null-asserted-optional-chain": [0],
@@ -86,7 +86,8 @@
             }
         ],
         "@tanstack/query/exhaustive-deps": "error",
-        "@tanstack/query/prefer-query-object-syntax": "error"
+        "@tanstack/query/prefer-query-object-syntax": "error",
+        "@typescript-eslint/no-shadow": "warn"
     },
     "settings": {
         "import/resolver": {

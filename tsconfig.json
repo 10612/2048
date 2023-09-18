@@ -27,11 +27,6 @@
       "types/*": ["./types/*"],
       "hooks/*": ["./hooks/*"],
       "components/*": ["./components/*"],
-      "mocks/*": ["./mocks/*"],
-      "utils/*": ["./utils/*"],
-      "assets/*": ["./assets/*"],
-      "styles/*": ["./styles/*"],
-      "api/*": ["./api/*"],
     },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

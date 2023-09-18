@@ -1,0 +1,13 @@
+{
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"editor.tabSize": 4,
+	"eslint.format.enable": true,
+	"editor.formatOnSave": true,
+	"[jsonc]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true
+	  },
+	"eslint.validate": ["typescript"]
+}

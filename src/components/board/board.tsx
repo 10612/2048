@@ -7,6 +7,7 @@ import { board } from "./styles";
 export default function Board(): JSX.Element {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [boardValues, setBoardValues] = useState(makeStartingBoard());
+	console.log(boardValues);
 
 	return (
 		<Paper sx={board}>

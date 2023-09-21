@@ -1,6 +1,6 @@
 import { random, range, sampleSize } from "lodash-es";
 import { Direction } from "../../types/board";
-import { moveLeft, moveRight } from "../../utils";
+import { moveDown, moveLeft, moveRight, moveUp } from "../../utils";
 
 export function generateNewValue(): 2 | 4 {
 	return random(0, 9) ? 2 : 4;
@@ -26,13 +26,10 @@ export function move(initialBoard: number[], direction: Direction): number[] {
 		case Direction.Right:
 			return moveRight(initialBoard);
 		case Direction.Up:
-			return initialBoard;
-			break;
+			return moveUp(initialBoard);
 		case Direction.Down:
-			return initialBoard;
-			break;
+			return moveDown(initialBoard);
 		default:
 			throw Error(`${direction} is not a direction`);
-			break;
 	}
 }

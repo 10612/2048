@@ -1,5 +1,12 @@
 import { chunk, partition } from "lodash-es";
 
+export function mirrorBoard(board: number[]): number[] {
+	const mirroredBoard: number[] = [];
+	for (let i = 0; i < 4; i += 1) {
+		mirroredBoard.push(board[i], board[i + 4], board[i + 8], board[i + 12]);
+	}
+	return mirroredBoard;
+}
 function move(rowOrColumn: number[]): void {
 	// eslint-disable-next-line no-param-reassign
 	rowOrColumn = partition(rowOrColumn, (tile) => tile).flat();
@@ -31,9 +38,9 @@ export function moveRight(initialBoard: number[]): number[] {
 }
 
 export function moveUp(initialBoard: number[]): number[] {
-	const movedBoard = chunk(initialBoard, 4).map((column) => {
-		move(column);
-		return column;
-	});
-	return movedBoard.flat();
+	return mirrorBoard(moveLeft(mirrorBoard(initialBoard)));
+}
+
+export function moveDown(initialBoard: number[]): number[] {
+	return mirrorBoard(moveRight(mirrorBoard(initialBoard)));
 }

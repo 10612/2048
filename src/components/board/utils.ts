@@ -19,6 +19,26 @@ export function makeStartingBoard(): number[] {
 	return board;
 }
 
+export function getDirection(
+	event: React.KeyboardEvent<HTMLDivElement>,
+): Direction | null {
+	const { key } = event;
+	console.log(event.key);
+	if (key === "a" || key === "A" || key === "ArrowLeft") {
+		return Direction.Left;
+	}
+	if (key === "d" || key === "D" || key === "ArrowRight") {
+		return Direction.Right;
+	}
+	if (key === "w" || key === "W" || key === "ArrowUp") {
+		return Direction.Up;
+	}
+	if (key === "s" || key === "S" || key === "ArrowDown") {
+		return Direction.Down;
+	}
+	return null;
+}
+
 export function move(initialBoard: number[], direction: Direction): number[] {
 	switch (direction) {
 		case Direction.Left:

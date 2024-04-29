@@ -19,11 +19,8 @@ export function makeStartingBoard(): number[] {
 	return board;
 }
 
-export function getDirection(
-	event: React.KeyboardEvent<HTMLDivElement>,
-): Direction | null {
+export function getDirection(event: KeyboardEvent): Direction | null {
 	const { key } = event;
-	console.log(event.key);
 	if (key === "a" || key === "A" || key === "ArrowLeft") {
 		return Direction.Left;
 	}

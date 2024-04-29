@@ -34,6 +34,7 @@
         "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/ban-types": "off",
         "no-use-before-define":"off",
+        "no-unused-expressions": "off",
         "no-promise-executor-return": "off",
         "no-shadow": "off",
         "@typescript-eslint/no-use-before-define": ["error"],
@@ -42,7 +43,7 @@
         "react/jsx-props-no-spreading": "off",
         "prettier/prettier": ["error", {"endOfLine": "auto", "useTabs": true}],
         "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn",
+        "react-hooks/exhaustive-deps": "error",
         "react/react-in-jsx-scope": "off",
         "react/destructuring-assignment": "off",
         "react/jsx-filename-extension": [1, {"extensions": [".tsx"]}],
@@ -50,12 +51,6 @@
         "react/require-default-props": "off",
         "import/prefer-default-export": "off",
         "import/no-extraneous-dependencies": "off",
-        "@typescript-eslint/explicit-function-return-type": [
-            "error",
-            {
-                "allowExpressions": true
-            }
-        ],
         "import/extensions": [
             2,
             "ignorePackages",

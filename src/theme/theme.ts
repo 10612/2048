@@ -1,6 +1,8 @@
 import { createTheme } from "@mui/material";
+import { initialShadows } from "./shadows/shadows";
 
 const theme = createTheme({
+	shadows: initialShadows(),
 	components: {
 		MuiPaper: {
 			variants: [

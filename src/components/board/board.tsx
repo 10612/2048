@@ -1,6 +1,4 @@
-import { Box, Paper } from "@mui/material";
-import { useCallback, useState } from "react";
-import { getDirection, makeStartingBoard, move } from "./utils";
+import { useCallback, useEffect, useState } from "react";
 import Tile from "../tile";
 import { board } from "./styles";
 
@@ -8,27 +6,43 @@ export default function Board(): JSX.Element {
 	const [boardValues, setBoardValues] = useState(makeStartingBoard());
 
 	const handleMove = useCallback(
-		(event: React.KeyboardEvent<HTMLDivElement>) => {
+		(event: KeyboardEvent) => {
 			const direction = getDirection(event);
-			if (direction !== null) {
+			if (
+				direction !== null &&
+				findMoveDirections(boardValues).includes(direction)
+			) {
 				setBoardValues((currentBoardValues) => {
-					const nb = move(currentBoardValues, direction);
-					console.log(nb);
-					return nb;
+					const movedBoard = move(currentBoardValues, direction);
+					const newTilePlacement = sample(getEmptyTiles(movedBoard))!;
+					movedBoard[newTilePlacement] = generateNewValue();
+					return movedBoard;
 				});
 			}
 		},
-		[],
+		[boardValues],
 	);
 
+	useEffect(() => {
+		test();
+	}, []);
+
+	useEffect(() => {
+		window.addEventListener("keydown", handleMove);
+
+		return () => window.removeEventListener("keydown", handleMove);
+	}, [handleMove]);
+
 	return (
-		<>
-			<Box component="input" onKeyDown={handleMove} />
+		<Box>
 			<Paper sx={board}>
 				{boardValues.map((value) => (
 					<Tile value={value} />
 				))}
 			</Paper>
-		</>
+			{findMoveDirections(boardValues).length === 0 && (
+				<Typography color="black">You Lost!</Typography>
+			)}
+		</Box>
 	);
 }

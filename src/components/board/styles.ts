@@ -10,4 +10,5 @@ export const board: SystemStyleObject = {
 	gridTemplateColumns: "repeat(4, 1fr)",
 	gridAutoRows: "1fr",
 	gap: "15px",
+	boxShadow: 0,
 };

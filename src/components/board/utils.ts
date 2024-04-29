@@ -1,6 +1,13 @@
-import { random, range, sampleSize } from "lodash-es";
+import { forEach, max, maxBy, random, range, sampleSize, sum } from "lodash-es";
 import { Direction } from "../../types/board";
-import { moveDown, moveLeft, moveRight, moveUp } from "../../utils";
+import {
+	findMoveDirections,
+	getEmptyTiles,
+	moveDown,
+	moveLeft,
+	moveRight,
+	moveUp,
+} from "../../utils";
 
 export function generateNewValue(): 2 | 4 {
 	return random(0, 9) ? 2 : 4;
@@ -49,4 +56,46 @@ export function move(initialBoard: number[], direction: Direction): number[] {
 		default:
 			throw Error(`${direction} is not a direction`);
 	}
+}
+
+function evalFunction(board: number[]) {
+	return findMoveDirections(board).length
+		? sum(board) * Math.log2(max(board) || 1)
+		: 0;
+}
+
+export function expectimax(board: number[], depth = 3) {
+	const possibleMoveDirections = findMoveDirections(board);
+
+	if (!possibleMoveDirections.length) {
+		return [undefined, 0] as const;
+	}
+
+	const moveScores = Object.fromEntries<number>(
+		possibleMoveDirections.map((direction) => [direction, 0]),
+	);
+
+	forEach(possibleMoveDirections, (direction) => {
+		const movedBoard = move(board, direction);
+		forEach(getEmptyTiles(movedBoard), (tile) => {
+			const movedBoardWith2 = [...movedBoard];
+			movedBoardWith2[tile] = 2;
+			const movedBoardWith2Score =
+				depth <= 1
+					? evalFunction(board)
+					: expectimax(movedBoardWith2, depth - 1)[1];
+
+			const movedBoardWith4 = [...movedBoard];
+			movedBoardWith4[tile] = 4;
+			const movedBoardWith4Score =
+				depth <= 1
+					? evalFunction(board)
+					: expectimax(movedBoardWith4, depth - 1)[1];
+
+			moveScores[direction] +=
+				movedBoardWith2Score * 0.9 + movedBoardWith4Score * 0.1;
+		});
+	});
+
+	return maxBy(Object.entries(moveScores), (entry) => entry[1])!;
 }

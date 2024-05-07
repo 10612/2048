@@ -1,16 +1,26 @@
-import { forEach, max, maxBy, random, range, sampleSize, sum } from "lodash-es";
+import {
+	countBy,
+	forEach,
+	max,
+	maxBy,
+	random,
+	range,
+	reduce,
+	sampleSize,
+} from "lodash-es";
 import { Direction } from "../../types/board";
 import {
 	findMoveDirections,
 	getEmptyTiles,
+	getNumberTiles,
 	moveDown,
 	moveLeft,
 	moveRight,
 	moveUp,
 } from "../../utils";
 
-export function generateNewValue(): 2 | 4 {
-	return random(0, 9) ? 2 : 4;
+export function generateNewValue(): 1 | 2 {
+	return random(0, 9) ? 1 : 2;
 }
 
 export function makeStartingBoard(): number[] {
@@ -58,13 +68,123 @@ export function move(initialBoard: number[], direction: Direction): number[] {
 	}
 }
 
-function evalFunction(board: number[]) {
-	return findMoveDirections(board).length
-		? sum(board) * Math.log2(max(board) || 1)
-		: 0;
+function hashBoard(bourd: number[]) {
+	// eslint-disable-next-line no-bitwise
+	return reduce(bourd, (hash, tile) => `${hash}${tile}`, "")!;
 }
 
-export function expectimax(board: number[], depth = 3) {
+function calcBoardSmoothness(board: number[]) {
+	// let score1 = 0;
+	// let score2 = 0;
+	let score = 0;
+
+	forEach(getNumberTiles(board), (tileIndex) => {
+		if ((tileIndex + 1) % 4) {
+			score += Math.abs(board[tileIndex] - board[tileIndex + 1]);
+		}
+
+		if (tileIndex % 4) {
+			score += Math.abs(board[tileIndex] - board[tileIndex]);
+		}
+
+		if (tileIndex - 4 >= 0) {
+			score += Math.abs(board[tileIndex] - board[tileIndex - 4]);
+		}
+
+		if (tileIndex + 4 < 16) {
+			score += Math.abs(board[tileIndex] - board[tileIndex + 4]);
+		}
+	});
+
+	return (max(board)! / score) * 110;
+
+	// if (startingCorner === 0) {
+	// 	const calcScore2Index = (index: number) =>
+	// 		(index % 4) * 4 + Math.floor(index / 4);
+
+	// 	for (let index = 0; index < 16; index += 1) {
+	// 		score1 += Math.abs(board[index] - board[index + 1]);
+	// 		score2 += Math.abs(
+	// 			board[calcScore2Index(index)] - board[calcScore2Index(index + 1)],
+	// 		);
+	// 	}
+	// }
+
+	// if (startingCorner === 3) {
+	// 	const calcScore1Index = (index: number) =>
+	// 		Math.floor(index / 4) * 4 + 3 - (index % 4);
+	// 	const calcScore2Index = (index: number) =>
+	// 		(index % 4) * 4 + 3 - Math.floor(index / 4);
+
+	// 	for (let index = 0; index < 16; index += 1) {
+	// 		score1 += Math.abs(
+	// 			board[calcScore1Index(index)] - board[calcScore1Index(index + 1)],
+	// 		);
+	// 		score2 += Math.abs(
+	// 			board[calcScore2Index(index)] - board[calcScore2Index(index + 1)],
+	// 		);
+	// 	}
+	// }
+
+	// if (startingCorner === 12) {
+	// 	const calcScore1Index = (index: number) =>
+	// 		Math.floor(index / 4) * 4 + 3 - (index % 4);
+	// 	const calcScore2Index = (index: number) =>
+	// 		(index % 4) * 4 + 3 - Math.floor(index / 4);
+
+	// 	for (let index = 15; index > 0; index -= 1) {
+	// 		score1 += Math.abs(
+	// 			board[calcScore1Index(index)] - board[calcScore1Index(index - 1)],
+	// 		);
+	// 		score2 += Math.abs(
+	// 			board[calcScore2Index(index)] - board[calcScore2Index(index - 1)],
+	// 		);
+	// 	}
+	// }
+
+	// if (startingCorner === 15) {
+	// 	const calcScore2Index = (index: number) =>
+	// 		(index % 4) * 4 + Math.floor(index / 4);
+
+	// 	for (let index = 15; index > 0; index -= 1) {
+	// 		score1 += Math.abs(board[index] - board[index - 1]);
+	// 		score2 += Math.abs(
+	// 			board[calcScore2Index(index)] - board[calcScore2Index(index - 1)],
+	// 		);
+	// 	}
+	// }
+
+	// return (board[startingCorner] / Math.min(score1, score2) + 1) * 2;
+}
+
+function evalFunction(board: number[]) {
+	const largestTileValue = max(board)!;
+
+	if (findMoveDirections(board).length) {
+		if (countBy(board, (tile) => tile)[largestTileValue] === 1) {
+			switch (largestTileValue) {
+				case board[0]:
+					return max(board)! * calcBoardSmoothness(board);
+				case board[3]:
+					return max(board)! * calcBoardSmoothness(board);
+				case board[12]:
+					return max(board)! * calcBoardSmoothness(board);
+				case board[15]:
+					return max(board)! * calcBoardSmoothness(board);
+				default:
+					return largestTileValue;
+			}
+		}
+	}
+
+	return 0;
+}
+
+export function expectimax(
+	board: number[],
+	depth = 3,
+	scoreCache: Record<string, [Direction, number]> = {},
+) {
 	const possibleMoveDirections = findMoveDirections(board);
 
 	if (!possibleMoveDirections.length) {
@@ -77,25 +197,37 @@ export function expectimax(board: number[], depth = 3) {
 
 	forEach(possibleMoveDirections, (direction) => {
 		const movedBoard = move(board, direction);
-		forEach(getEmptyTiles(movedBoard), (tile) => {
-			const movedBoardWith2 = [...movedBoard];
-			movedBoardWith2[tile] = 2;
-			const movedBoardWith2Score =
-				depth <= 1
-					? evalFunction(board)
-					: expectimax(movedBoardWith2, depth - 1)[1];
+		const boardHash = hashBoard(movedBoard);
+		if (boardHash in scoreCache) {
+			moveScores[direction] += scoreCache[boardHash][1];
+		} else {
+			const emptyTiles = getEmptyTiles(movedBoard);
+			forEach(emptyTiles, (tile) => {
+				const movedBoardWith2 = [...movedBoard];
+				movedBoardWith2[tile] = 1;
+				const movedBoardWith2Score =
+					depth <= 1
+						? evalFunction(board)
+						: expectimax(movedBoardWith2, depth - 1, scoreCache)[1];
 
-			const movedBoardWith4 = [...movedBoard];
-			movedBoardWith4[tile] = 4;
-			const movedBoardWith4Score =
-				depth <= 1
-					? evalFunction(board)
-					: expectimax(movedBoardWith4, depth - 1)[1];
+				const movedBoardWith4 = [...movedBoard];
+				movedBoardWith4[tile] = 2;
+				const movedBoardWith4Score =
+					depth <= 1
+						? evalFunction(board)
+						: expectimax(movedBoardWith4, depth - 1, scoreCache)[1];
 
-			moveScores[direction] +=
-				movedBoardWith2Score * 0.9 + movedBoardWith4Score * 0.1;
-		});
+				moveScores[direction] +=
+					(movedBoardWith2Score * 0.9 + movedBoardWith4Score * 0.1) /
+					emptyTiles.length;
+			});
+			// eslint-disable-next-line no-param-reassign
+			scoreCache[boardHash] = [direction, moveScores[direction]];
+		}
 	});
 
-	return maxBy(Object.entries(moveScores), (entry) => entry[1])!;
+	return (
+		maxBy(Object.entries(moveScores), (entry) => entry[1]) ||
+		([undefined, 0] as const)
+	);
 }

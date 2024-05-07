@@ -15,7 +15,7 @@ function move(rowOrColumn: number[]): number[] {
 	for (let i = 0; i < 3 && rowOrColumn[i] !== 0; i += 1) {
 		if (rowOrColumn[i] === rowOrColumn[i + 1]) {
 			// eslint-disable-next-line no-param-reassign
-			rowOrColumn[i] *= 2;
+			rowOrColumn[i] += 1;
 			rowOrColumn.splice(i + 1, 1);
 			rowOrColumn.push(0);
 		}

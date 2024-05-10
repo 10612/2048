@@ -50,10 +50,27 @@ export default function Board(): JSX.Element {
 	}, [handleMove]);
 
 	useEffect(() => {
+		if (Math.max(...boardValues) >= 11)
+			localStorage.setItem("latestBoard", JSON.stringify(boardValues));
+	}, [boardValues]);
+
+	useEffect(() => {
 		if (autoplay && findMoveDirections(boardValues).length) {
+			let depth = 3;
+			if (Math.max(...boardValues) > 10) {
+				depth = 4;
+			}
+			if (
+				Math.max(...boardValues) > 11 &&
+				boardValues.some(
+					(tile) => tile < Math.max(...boardValues) && tile >= 11,
+				)
+			) {
+				depth = 5;
+			}
 			const direction = expectimax(
 				boardValues,
-				getEmptyTiles(boardValues).length <= 3 ? 5 : 4,
+				getEmptyTiles(boardValues).length <= 3 ? depth + 1 : depth,
 			)[0] as Direction;
 			if (
 				direction !== null &&
@@ -101,6 +118,13 @@ export default function Board(): JSX.Element {
 				save board
 			</Button>
 			<TextField onChange={(event) => setSaveName(event.target.value)} />
+			<Button
+				onClick={() =>
+					setBoardValues(JSON.parse(localStorage.getItem("latestBoard")!))
+				}
+			>
+				load latest board
+			</Button>
 			<Typography color="black">
 				{Math.floor((Date.now() - startTime) / 60000)}:
 				{Math.floor(((Date.now() - startTime) % 60000) / 1000)}

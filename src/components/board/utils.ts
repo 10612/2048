@@ -1,5 +1,4 @@
 import {
-	countBy,
 	forEach,
 	max,
 	maxBy,
@@ -7,6 +6,7 @@ import {
 	range,
 	reduce,
 	sampleSize,
+	sum,
 } from "lodash-es";
 import { Direction } from "../../types/board";
 import {
@@ -69,8 +69,12 @@ export function move(initialBoard: number[], direction: Direction): number[] {
 }
 
 function hashBoard(bourd: number[]) {
-	// eslint-disable-next-line no-bitwise
-	return reduce(bourd, (hash, tile) => `${hash}${tile}`, "")!;
+	return reduce(
+		bourd,
+		// eslint-disable-next-line no-bitwise
+		(hash, tile) => (hash << BigInt(4)) + BigInt(tile),
+		BigInt(0),
+	)!;
 }
 
 function calcBoardSmoothness(board: number[]) {
@@ -96,7 +100,7 @@ function calcBoardSmoothness(board: number[]) {
 		}
 	});
 
-	return (max(board)! / score) * 110;
+	return max(board)! / score + 1;
 
 	// if (startingCorner === 0) {
 	// 	const calcScore2Index = (index: number) =>
@@ -158,32 +162,32 @@ function calcBoardSmoothness(board: number[]) {
 }
 
 function evalFunction(board: number[]) {
-	const largestTileValue = max(board)!;
-
-	if (findMoveDirections(board).length) {
-		if (countBy(board, (tile) => tile)[largestTileValue] === 1) {
-			switch (largestTileValue) {
-				case board[0]:
-					return max(board)! * calcBoardSmoothness(board);
-				case board[3]:
-					return max(board)! * calcBoardSmoothness(board);
-				case board[12]:
-					return max(board)! * calcBoardSmoothness(board);
-				case board[15]:
-					return max(board)! * calcBoardSmoothness(board);
-				default:
-					return largestTileValue;
-			}
-		}
+	if (!findMoveDirections(board).length) {
+		return 0;
 	}
 
-	return 0;
+	const largestTileValue = max(board)!;
+	const bonus = -sum(board);
+
+	if (
+		largestTileValue === board[0] ||
+		largestTileValue === board[3] ||
+		largestTileValue === board[12] ||
+		largestTileValue === board[15]
+	) {
+		return (
+			2 ** largestTileValue * calcBoardSmoothness(board) + bonus
+			// (getEmptyTiles(board).length / 16 + 1)
+		);
+	}
+
+	return 2 ** largestTileValue + bonus;
 }
 
 export function expectimax(
 	board: number[],
 	depth = 3,
-	scoreCache: Record<string, [Direction, number]> = {},
+	scoreCache: Map<BigInt, [Direction, number]> = new Map(),
 ) {
 	const possibleMoveDirections = findMoveDirections(board);
 
@@ -198,8 +202,8 @@ export function expectimax(
 	forEach(possibleMoveDirections, (direction) => {
 		const movedBoard = move(board, direction);
 		const boardHash = hashBoard(movedBoard);
-		if (boardHash in scoreCache) {
-			moveScores[direction] += scoreCache[boardHash][1];
+		if (scoreCache.has(boardHash)) {
+			moveScores[direction] += scoreCache.get(boardHash)![1];
 		} else {
 			const emptyTiles = getEmptyTiles(movedBoard);
 			forEach(emptyTiles, (tile) => {
@@ -222,7 +226,7 @@ export function expectimax(
 					emptyTiles.length;
 			});
 			// eslint-disable-next-line no-param-reassign
-			scoreCache[boardHash] = [direction, moveScores[direction]];
+			scoreCache.set(boardHash, [direction, moveScores[direction]]);
 		}
 	});
 

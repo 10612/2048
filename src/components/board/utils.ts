@@ -88,7 +88,7 @@ function calcBoardSmoothness(board: number[]) {
 		}
 
 		if (tileIndex % 4) {
-			score += Math.abs(board[tileIndex] - board[tileIndex]);
+			score += Math.abs(board[tileIndex] - board[tileIndex - 1]);
 		}
 
 		if (tileIndex - 4 >= 0) {

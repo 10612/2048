@@ -1,6 +1,6 @@
 import { SystemStyleObject } from "@mui/system";
 
-export const board: SystemStyleObject = {
+export const boardStyles: SystemStyleObject = {
 	display: "grid",
 	height: "470px",
 	width: "470px",

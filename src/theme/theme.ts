@@ -2,6 +2,9 @@ import { createTheme } from "@mui/material";
 import { initialShadows } from "./shadows/shadows";
 
 const theme = createTheme({
+	typography: {
+		fontFamily: "Clear Sans",
+	},
 	shadows: initialShadows(),
 	components: {
 		MuiPaper: {
@@ -19,6 +22,21 @@ const theme = createTheme({
 					},
 				},
 			],
+		},
+		MuiButton: {
+			styleOverrides: {
+				root: {
+					fontSize: "18px",
+					height: "40px",
+					padding: "0px 20px",
+					color: "#f9f6f2",
+					backgroundColor: "#8f7a66",
+					textTransform: "capitalize",
+					"&:hover": {
+						backgroundColor: "#a5896f",
+					},
+				},
+			},
 		},
 	},
 });

@@ -1,12 +1,20 @@
 import { chunk, forEach, partition } from "lodash-es";
 import { Direction } from "./types/board";
 
-export function mirrorBoard(board: number[]): number[] {
+export function mirrorBoard(board: number[]) {
 	const mirroredBoard: number[] = [];
 	for (let i = 0; i < 4; i += 1) {
 		mirroredBoard.push(board[i], board[i + 4], board[i + 8], board[i + 12]);
 	}
 	return mirroredBoard;
+}
+
+export function rotateBoardClockwise(board: number[]) {
+	const rotatedBoard: number[] = [];
+	for (let i = 0; i < 4; i += 1) {
+		rotatedBoard.push(board[i + 12], board[i + 8], board[i + 4], board[i]);
+	}
+	return rotatedBoard;
 }
 
 function move(rowOrColumn: number[]): number[] {

@@ -24,9 +24,13 @@ export default function GameExaminer({ game, onNavigate }: GameExaminerProps) {
 
 	useEffect(() => {
 		setMove(game.length - 1);
-		onNavigate(game[move]);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [game]);
+
+	useEffect(() => {
+		onNavigate(game[move]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [move]);
 
 	return (
 		<Box sx={navigationContainer}>
@@ -45,7 +49,10 @@ export default function GameExaminer({ game, onNavigate }: GameExaminerProps) {
 				<NavigateBeforeIcon />
 				<NavigateBeforeIcon />
 			</IconButton>
-			<IconButton onClick={() => setMove(navigate(move - 1))}>
+			<IconButton
+				sx={navigationButton}
+				onClick={() => setMove(navigate(move - 1))}
+			>
 				<NavigateBeforeIcon />
 			</IconButton>
 			<TextField
@@ -53,7 +60,10 @@ export default function GameExaminer({ game, onNavigate }: GameExaminerProps) {
 				value={String(move)}
 				onChange={(event) => setMove(navigate(Number(event.target.value)))}
 			/>
-			<IconButton onClick={() => setMove(navigate(move + 1))}>
+			<IconButton
+				sx={navigationButton}
+				onClick={() => setMove(navigate(move + 1))}
+			>
 				<NavigateNextIcon />
 			</IconButton>
 			<IconButton

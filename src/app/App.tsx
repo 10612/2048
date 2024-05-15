@@ -17,18 +17,21 @@ function App(): JSX.Element {
 	const [startTime, setStartTime] = useState(Date.now());
 	const [autoplay, setAutoplay] = useState(false);
 
-	const handleMove = useCallback(
-		(newBoard: number[]) => {
-			setBoard(newBoard);
-			setGameSave([...gameSave, newBoard]);
-			if (!findMoveDirections(newBoard).length) {
-				setIsGameOngoing(false);
-			}
-			if (Math.max(...newBoard) >= 11)
-				localStorage.setItem("latestBoard", JSON.stringify(newBoard));
-		},
-		[gameSave],
-	);
+	const handleMove = useCallback((newBoard: number[]) => {
+		setBoard(newBoard);
+		if (!findMoveDirections(newBoard).length) {
+			setIsGameOngoing(false);
+		}
+		if (Math.max(...newBoard) >= 11)
+			localStorage.setItem("latestBoard", JSON.stringify(newBoard));
+	}, []);
+
+	useEffect(() => {
+		if (isGameOngoing) {
+			setGameSave([...gameSave, board]);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [board]);
 
 	useEffect(() => {
 		if (autoplay && findMoveDirections(board).length) {
@@ -83,6 +86,12 @@ function App(): JSX.Element {
 					gameDuration={Date.now() - startTime}
 				/>
 			</Box>
+			{!isGameOngoing && (
+				<GameExaminer
+					game={gameSave}
+					onNavigate={(currentBoard) => setBoard(currentBoard)}
+				/>
+			)}
 			<Box sx={{ display: "flex", gap: "12px" }}>
 				<Button
 					onClick={() => {
@@ -109,12 +118,6 @@ function App(): JSX.Element {
 					load latest board
 				</Button>
 			</Box>
-			{!isGameOngoing && (
-				<GameExaminer
-					game={gameSave}
-					onNavigate={(currentBoard) => setBoard(currentBoard)}
-				/>
-			)}
 		</Box>
 	);
 }

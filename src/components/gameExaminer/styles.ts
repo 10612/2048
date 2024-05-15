@@ -2,6 +2,7 @@ import { SystemStyleObject } from "@mui/system";
 
 export const navigationContainer: SystemStyleObject = {
 	display: "flex",
+	alignItems: "center",
 };
 
 export const navigationButton: SystemStyleObject = {

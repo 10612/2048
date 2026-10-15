@@ -77,7 +77,7 @@ function hashBoard(bourd: number[]) {
 	)!;
 }
 
-function calcBoardSmoothness(board: number[]) {
+export function calcBoardSmoothnes(board: number[]) {
 	// let score1 = 0;
 	// let score2 = 0;
 	let score = 0;
@@ -176,7 +176,7 @@ function evalFunction(board: number[]) {
 		largestTileValue === board[15]
 	) {
 		return (
-			2 ** largestTileValue * calcBoardSmoothness(board) + bonus
+			2 ** largestTileValue * calcBoardSmoothnes(board) + bonus
 			// (getEmptyTiles(board).length / 16 + 1)
 		);
 	}
